@@ -1,13 +1,25 @@
+import 'package:diary_app/screens/signin_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
 
-  final user = FirebaseAuth.instance.currentUser!;
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  // final user = FirebaseAuth.instance.currentUser!;
 
   void signOut() async {
     await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SignInScreen(),
+      ),
+    );
   }
 
   @override
