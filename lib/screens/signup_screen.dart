@@ -3,6 +3,7 @@ import 'package:diary_app/screens/home_screen.dart';
 import 'package:diary_app/screens/signin_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:email_validator/email_validator.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -18,7 +19,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String userPassword = '';
 
   // create a global key to identify the form and validate the form
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   bool _isLoading = false; // Loading state variable
 
@@ -27,44 +28,56 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final userPasswordController = TextEditingController();
 
   // create a function to insert data into firebase
-  void insertData() async {
+  Future insertData() async {
     setState(() => _isLoading = true); // Start loading
+    final validForm = _formKey.currentState!.validate();
 
-    // if the form is valid then proceed
-    if (_formKey.currentState!.validate()) {
+    if (!validForm) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    try {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-            email: userEmailController.text,
-            password: userPasswordController.text,
+            email: userEmailController.text.trim(),
+            password: userPasswordController.text.trim(),
           )
-          .then((value) => addUserDetails())
-          .catchError((error) {
-        print('Failed to add user: $error');
-        setState(() => _isLoading = false);
-      });
-    } else {
+          .then((value) => addUserDetails());
+    } on FirebaseAuthException catch (e) {
       setState(() => _isLoading = false);
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error'),
+          content: Text(e.message!),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
   Future addUserDetails() async {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-    return await users
-        .add({
-          'userName': userNameController.text,
-          'userEmail': userEmailController.text,
-          'userPassword': userPasswordController.text,
-        })
-        .then(
-          (value) => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomeScreen(),
-            ),
-          ),
-        )
-        .catchError((error) => print('Failed to add user: $error'));
+    return await users.add({
+      'userName': userNameController.text,
+      'userEmail': userEmailController.text,
+      'userPassword': userPasswordController.text,
+    }).then((value) {
+      setState(() => _isLoading = false);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(),
+        ),
+      );
+    });
   }
 
   @override
@@ -117,6 +130,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       keyboardType: TextInputType.name,
                       controller: userNameController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null ||
                             value.isEmpty ||
@@ -140,13 +154,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       keyboardType: TextInputType.emailAddress,
                       controller: userEmailController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email';
                         }
                         // Checking if the entered email has the right format
-                        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-                            .hasMatch(value)) {
+                        if (!EmailValidator.validate(value)) {
                           return 'Please enter a valid email Address';
                         }
                         return null; // Return null if the input is valid
@@ -168,6 +182,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       keyboardType: TextInputType.visiblePassword,
                       controller: userPasswordController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null ||
                             value.isEmpty ||
