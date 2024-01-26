@@ -17,6 +17,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // create a global key to identify the form and validate the form
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  bool _isLoading = false; // Loading state variable
+
   // create a function to get the user input data
   getUserName(name) {
     userName = name;
@@ -33,7 +35,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   // create a function to insert data into firebase
-  insertData() {
+  insertData() async {
+    setState(() => _isLoading = true); // Start loading
+
     DocumentReference documentReference =
         FirebaseFirestore.instance.collection("users").doc();
     Map<String, dynamic> studentData = {
@@ -41,7 +45,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       "userEmail": userEmail,
       "userPassword": userPassword
     };
-    documentReference.set(studentData).whenComplete(() {});
+    documentReference.set(studentData).whenComplete(() {
+      Future.delayed(const Duration(seconds: 1), () {
+        setState(() => _isLoading = false); // Stop loading
+      });
+    });
   }
 
   @override
@@ -152,22 +160,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 16.0),
               ElevatedButton(
+                onPressed: _isLoading ? null : insertData,
                 style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(150, 50),
-                  textStyle: const TextStyle(fontSize: 20),
                   backgroundColor: Colors.purple,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
+                  minimumSize: const Size(double.infinity, 50),
                 ),
-                onPressed: () {
-                  if (!_formKey.currentState!.validate()) {
-                  } else {
-                    insertData();
-                  }
-                },
-                child: const Text('Sign Up'),
+                // if loading is true show loader else show text
+                child: _isLoading
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3, // stroke of the loader
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white, // loader color
+                          ),
+                        ),
+                      )
+                    : const Text('Sign Up'),
               ),
               const SizedBox(height: 25),
 
