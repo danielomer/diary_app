@@ -3,8 +3,8 @@ import 'package:diary_app/screens/signin_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class AuthPage extends StatelessWidget {
-  const AuthPage({super.key});
+class Auth extends StatelessWidget {
+  const Auth({super.key});
 
   @override
   Widget build(BuildContext context) {
