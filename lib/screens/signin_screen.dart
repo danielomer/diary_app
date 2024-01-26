@@ -1,3 +1,4 @@
+import 'package:diary_app/screens/home_screen.dart';
 import 'package:diary_app/screens/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,14 +20,14 @@ class _SignInScreenState extends State<SignInScreen> {
   final passwordController = TextEditingController();
 
   // create a function to insert data into firebase
-  void checkAccount() async {
+  Future checkAccount() async {
     // Start loading
     setState(() => _isLoading = true);
 
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
     )
         .onError((error, stackTrace) {
       setState(() => _isLoading = false);
@@ -79,7 +80,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   children: [
                     // welcome text
                     const Text(
-                      "Welcome to Diary App",
+                      "Welcome back to Diary App",
                       style: TextStyle(fontSize: 20),
                     ),
                     const SizedBox(height: 25),
