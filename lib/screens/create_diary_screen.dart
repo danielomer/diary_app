@@ -1,3 +1,9 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diary_app/components/primaryButton.dart';
+import 'package:diary_app/screens/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -7,8 +13,32 @@ class CreateDiaryScreen extends StatefulWidget {
 }
 
 class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
-  String title = '';
-  String body = '';
+  final user = FirebaseAuth.instance.currentUser!;
+
+  final title = TextEditingController();
+  final body = TextEditingController();
+  String bodyText = '';
+
+  bool _isLoading = false;
+
+  Future saveDiary() async {
+    setState(() => _isLoading = true);
+    CollectionReference diaries =
+        FirebaseFirestore.instance.collection('diaries');
+
+    return await diaries.add({
+      'uid': user.uid,
+      'email': user.email,
+      'title': title.text,
+      'body': body.text,
+      'date': DateFormat('MMMM dd   hh:mm a').format(
+        DateTime.now(),
+      ),
+    }).then((value) {
+      setState(() => _isLoading = false);
+      Navigator.pop(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +56,7 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Text(
-              '${DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString()}',
+              '${DateFormat('dd/MM/yyyy').format(DateTime.now())}',
               style: TextStyle(fontSize: 14, color: Colors.white),
             ),
           ),
@@ -39,11 +69,7 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
           children: [
             // diary title
             TextField(
-              onChanged: (value) {
-                setState(() {
-                  title = value;
-                });
-              },
+              controller: title,
               decoration: InputDecoration(
                 hintText: 'Diary Title',
                 hintStyle: TextStyle(
@@ -64,7 +90,7 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                 ),
                 Text(
                   // this function removes all the white spaces in the body string and only counts the characters
-                  '${body.replaceAll(RegExp(r'\s+'), '').length} characters',
+                  '${bodyText.replaceAll(RegExp(r'\s+'), '').length} characters',
                   style: TextStyle(fontSize: 13, color: Colors.grey),
                 ),
               ],
@@ -73,9 +99,10 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
             // diary body
             Expanded(
               child: TextField(
+                controller: body,
                 onChanged: (value) {
                   setState(() {
-                    body = value;
+                    bodyText = value;
                   });
                 },
                 maxLines: null,
@@ -94,19 +121,11 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Save diary entry logic here
-                  },
-                  child: Text('Save'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                ),
+                PrimaryButton(
+                    text: "Save",
+                    onTap: saveDiary,
+                    isLoading: _isLoading,
+                    size: 100)
               ],
             )
           ],
