@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diary_app/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,7 @@ Future<void> main() async {
       projectId: 'diaryapp-30213',
     ),
   );
-  runApp(const SplashScreen());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -23,45 +22,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Diary App',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Flutter Firebase Demo'),
-        ),
-        body: Column(
-          children: <Widget>[
-            StreamBuilder(
-              stream:
-                  FirebaseFirestore.instance.collection("users").snapshots(),
-              builder: (context, snapshot) {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    DocumentSnapshot documentSnapshot =
-                        snapshot.data!.docs[index];
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: Text(documentSnapshot["name"].toString()),
-                        ),
-                        Expanded(
-                          child: Text(documentSnapshot["email"]),
-                        ),
-                        Expanded(
-                          child: Text(documentSnapshot["password"]),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+      theme: ThemeData(primarySwatch: Colors.purple),
+      home: const SplashScreen(),
     );
   }
 }
