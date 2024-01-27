@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diary_app/components/primaryButton.dart';
-import 'package:diary_app/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -13,14 +11,18 @@ class CreateDiaryScreen extends StatefulWidget {
 }
 
 class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
+  // to get the current user
   final user = FirebaseAuth.instance.currentUser!;
 
+  // create a global key to identify the form and validate the form
   final title = TextEditingController();
   final body = TextEditingController();
   String bodyText = '';
 
+// Loading state variable
   bool _isLoading = false;
 
+// a function to insert data into firebase
   Future saveDiary() async {
     setState(() => _isLoading = true);
     CollectionReference diaries =
