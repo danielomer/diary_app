@@ -1,3 +1,4 @@
+import 'package:diary_app/components/primaryButton.dart';
 import 'package:diary_app/screens/forgot_password_screen.dart';
 import 'package:diary_app/screens/home_screen.dart';
 import 'package:diary_app/screens/signup_screen.dart';
@@ -181,23 +182,11 @@ class _SignInScreenState extends State<SignInScreen> {
                       ],
                     ),
                     const SizedBox(height: 16.0),
-                    ElevatedButton(
-                        onPressed: _isLoading ? null : checkAccount,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.purple,
-                          foregroundColor: Colors.white,
-                          minimumSize: const Size(double.infinity, 50),
-                        ),
-                        // if loading is true show loader else show text
-                        child: _isLoading
-                            ? const SizedBox(
-                                height: 30,
-                                width: 30,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ))
-                            : const Text('Sign In')),
-
+                    PrimaryButton(
+                      text: "Sign in",
+                      onTap: checkAccount,
+                      isLoading: _isLoading,
+                    ),
                     const SizedBox(height: 25),
                     // sign in text if user already has an account
                     Row(

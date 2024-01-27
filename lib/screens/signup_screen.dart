@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diary_app/components/primaryButton.dart';
 import 'package:diary_app/screens/home_screen.dart';
 import 'package:diary_app/screens/signin_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,7 +29,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final userPasswordController = TextEditingController();
 
   // create a function to insert data into firebase
-  Future insertData() async {
+  Future createAccount() async {
     setState(() => _isLoading = true); // Start loading
     final validForm = _formKey.currentState!.validate();
 
@@ -194,27 +195,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       obscureText: true,
                     ),
                     const SizedBox(height: 16.0),
-                    ElevatedButton(
-                      onPressed: _isLoading ? null : insertData,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
-                        foregroundColor: Colors.white,
-                        side: const BorderSide(color: Colors.purple),
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      // if loading is true show loader else show text
-                      child: _isLoading
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3, // stroke of the loader
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white, // loader color
-                                ),
-                              ),
-                            )
-                          : const Text('Sign Up'),
+                    PrimaryButton(
+                      text: 'Sign Up',
+                      isLoading: _isLoading,
+                      onTap: () => createAccount(),
                     ),
                     const SizedBox(height: 25),
 

@@ -1,3 +1,4 @@
+import 'package:diary_app/components/primaryButton.dart';
 import 'package:diary_app/screens/signin_screen.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -105,17 +106,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     },
                   ),
                   const SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: () => resetPassword(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple,
-                      foregroundColor: Colors.white,
-                      side: const BorderSide(color: Colors.purple),
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    // if loading is true show loader else show text
-                    child: const Text('Send Reset Link'),
-                  ),
+                  PrimaryButton(text: "Send Reset Link", onTap: resetPassword),
                 ],
               ),
             ),
