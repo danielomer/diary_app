@@ -98,11 +98,16 @@ class _SignInScreenState extends State<SignInScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // welcome text
                     const Text(
                       "Welcome back to Diary App",
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 17),
                     ),
+                    const SizedBox(height: 15),
+                    Image.asset(
+                      'assets/images/signin_draw.png',
+                      height: 150,
+                    ),
+
                     const SizedBox(height: 25),
 
                     // form fields

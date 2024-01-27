@@ -111,7 +111,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     // welcome text
                     const Text(
                       "Welcome to Diary App",
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 17),
+                    ),
+                    const SizedBox(height: 25),
+                    Image.asset(
+                      'assets/images/signup_draw.png',
+                      height: 150,
                     ),
                     const SizedBox(height: 25),
 
