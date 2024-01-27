@@ -14,6 +14,8 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
   // to get the current user
   final user = FirebaseAuth.instance.currentUser!;
 
+  final _formKey = GlobalKey<FormState>();
+
   // create a global key to identify the form and validate the form
   final title = TextEditingController();
   final body = TextEditingController();
@@ -66,71 +68,92 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // diary title
-            TextField(
-              controller: title,
-              decoration: InputDecoration(
-                hintText: 'Diary Title',
-                hintStyle: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 20.0,
-                ),
-                border: InputBorder.none,
-              ),
-            ),
-            SizedBox(height: 16.0),
-            // diary date and time
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${DateFormat('MMMM dd   hh:mm a').format(DateTime.now())}',
-                  style: TextStyle(fontSize: 13, color: Colors.grey),
-                ),
-                Text(
-                  // this function removes all the white spaces in the body string and only counts the characters
-                  '${bodyText.replaceAll(RegExp(r'\s+'), '').length} characters',
-                  style: TextStyle(fontSize: 13, color: Colors.grey),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.0),
-            // diary body
-            Expanded(
-              child: TextField(
-                controller: body,
-                onChanged: (value) {
-                  setState(() {
-                    bodyText = value;
-                  });
-                },
-                maxLines: null,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // diary title
+              TextFormField(
+                controller: title,
                 decoration: InputDecoration(
-                  hintText: 'Diary Body',
+                  hintText: 'Diary Title',
                   hintStyle: TextStyle(
                     color: Colors.grey,
                     fontSize: 20.0,
                   ),
                   border: InputBorder.none,
                 ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter diary title';
+                  }
+                  return null;
+                },
               ),
-            ),
-            SizedBox(height: 16.0),
-            // save button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                PrimaryButton(
-                    text: "Save",
-                    onTap: saveDiary,
-                    isLoading: _isLoading,
-                    size: 100)
-              ],
-            )
-          ],
+              SizedBox(height: 16.0),
+              // diary date and time
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${DateFormat('MMMM dd   hh:mm a').format(DateTime.now())}',
+                    style: TextStyle(fontSize: 13, color: Colors.grey),
+                  ),
+                  Text(
+                    // this function removes all the white spaces in the body string and only counts the characters
+                    '${bodyText.replaceAll(RegExp(r'\s+'), '').length} characters',
+                    style: TextStyle(fontSize: 13, color: Colors.grey),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
+              // diary body
+              Expanded(
+                child: TextFormField(
+                  controller: body,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  onChanged: (value) {
+                    setState(() {
+                      bodyText = value;
+                    });
+                  },
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    hintText: 'Diary Body',
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 20.0,
+                    ),
+                    border: InputBorder.none,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter diary body';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              SizedBox(height: 16.0),
+              // save button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  PrimaryButton(
+                      text: "Save",
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {
+                          saveDiary();
+                        }
+                      },
+                      isLoading: _isLoading,
+                      size: 100)
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
