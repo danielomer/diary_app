@@ -10,10 +10,15 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   // create a global key to identify the form and validate the form
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
 
   Future resetPassword() async {
+    final validForm = _formKey.currentState!.validate();
+
+    if (!validForm) {
+      return;
+    }
     await FirebaseAuth.instance
         .sendPasswordResetEmail(email: emailController.text.trim());
 

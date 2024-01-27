@@ -1,6 +1,7 @@
 import 'package:diary_app/screens/forgot_password_screen.dart';
 import 'package:diary_app/screens/home_screen.dart';
 import 'package:diary_app/screens/signup_screen.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,7 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   // create a global key to identify the form and validate the form
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   bool _isLoading = false; // Loading state variable
 
@@ -24,6 +25,13 @@ class _SignInScreenState extends State<SignInScreen> {
   Future checkAccount() async {
     // Start loading
     setState(() => _isLoading = true);
+
+    final validForm = _formKey.currentState!.validate();
+
+    if (!validForm) {
+      setState(() => _isLoading = false);
+      return;
+    }
 
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(
@@ -116,8 +124,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           return 'Please enter your email';
                         }
                         // Checking if the entered email has the right format
-                        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-                            .hasMatch(value)) {
+                        if (!EmailValidator.validate(value)) {
                           return 'Please enter a valid email Address';
                         }
                         return null; // Return null if the input is valid
