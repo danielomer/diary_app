@@ -6,6 +6,24 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CreateDiaryScreen extends StatefulWidget {
+  // add title and body and date arguments to the constructor of CreateDiaryScreen
+  final String? docId;
+  final String? uid;
+  final String? title;
+  final String? body;
+  final String? date;
+  final bool? isUpdate;
+
+  const CreateDiaryScreen(
+      {Key? key,
+      this.title,
+      this.body,
+      this.date,
+      this.docId,
+      this.uid,
+      this.isUpdate})
+      : super(key: key);
+
   @override
   _CreateDiaryScreenState createState() => _CreateDiaryScreenState();
 }
@@ -20,6 +38,19 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
   final title = TextEditingController();
   final body = TextEditingController();
   String bodyText = '';
+
+  // a function to change the title and body text controllers to the current diary to update it
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isUpdate!) {
+      title.text = widget.title!;
+      body.text = widget.body!;
+    } else {
+      title.text = '';
+      body.text = '';
+    }
+  }
 
 // Loading state variable
   bool _isLoading = false;
@@ -42,6 +73,25 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
       setState(() => _isLoading = false);
       Navigator.pop(context);
     });
+  }
+
+  // a function to update data into firebase using docId and check if the user is the owner of the diary before updating
+  Future updateDiary() async {
+    setState(() => _isLoading = true);
+    CollectionReference diaries =
+        FirebaseFirestore.instance.collection('diaries');
+
+    return await diaries
+        .doc(widget.docId)
+        .update({
+          'title': title.text,
+          'body': body.text,
+          'date': DateFormat('MMMM dd   hh:mm a').format(
+            DateTime.now(),
+          ),
+        })
+        .then((value) => Navigator.pop(context))
+        .catchError((error) => print('Failed to update diary: $error'));
   }
 
   @override
@@ -145,7 +195,11 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                       text: "Save",
                       onTap: () {
                         if (_formKey.currentState!.validate()) {
-                          saveDiary();
+                          if (widget.isUpdate!) {
+                            updateDiary();
+                          } else {
+                            saveDiary();
+                          }
                         }
                       },
                       isLoading: _isLoading,

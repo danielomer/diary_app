@@ -93,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   date: doc["date"],
                   id: doc.id, // Document ID
                   scaffoldKey: scaffoldKey, // Scaffold Key for SnackBar
+                  uid: user.uid,
                 );
               },
             );
@@ -105,7 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CreateDiaryScreen(),
+              builder: (context) => CreateDiaryScreen(
+                isUpdate: false,
+              ),
             ),
           );
         },
@@ -121,11 +124,13 @@ class diaryContainer extends StatelessWidget {
   final String body;
   final String date;
   final String id;
+  final String uid;
   final scaffoldKey;
 
   const diaryContainer({
     super.key,
     required this.id,
+    required this.uid,
     required this.title,
     required this.body,
     required this.date,
@@ -142,74 +147,91 @@ class diaryContainer extends StatelessWidget {
         border: Border.all(color: Colors.purple),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          // diary title
-          Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            softWrap: false,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+      child: MaterialButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateDiaryScreen(
+                docId: id,
+                uid: uid,
+                title: title,
+                body: body,
+                isUpdate: true,
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          // diary body
-          Text(
-            body,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            softWrap: false,
-            style: TextStyle(
-              fontSize: 16,
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // diary title
+            Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          // diary date
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                date,
-                style: TextStyle(
-                  fontSize: 16,
+            const SizedBox(height: 10),
+            // diary body
+            Text(
+              body,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            // diary date
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  date,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-              // delete icon button
-              IconButton(
-                onPressed: () async {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text('Delete Diary'),
-                        content: const Text(
-                            'Are you sure you want to delete this diary?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              deleteDiary(context);
-                            },
-                            child: const Text('Delete'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                icon: const Icon(Icons.delete),
-              ),
-            ],
-          )
-        ],
+                // delete icon button
+                IconButton(
+                  onPressed: () async {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Delete Diary'),
+                          content: const Text(
+                              'Are you sure you want to delete this diary?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                deleteDiary(context);
+                              },
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.delete),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
