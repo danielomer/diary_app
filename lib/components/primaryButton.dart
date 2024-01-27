@@ -4,11 +4,13 @@ class PrimaryButton extends StatelessWidget {
   final String text;
   final bool isLoading;
   final VoidCallback onTap;
+  final double? size;
 
   const PrimaryButton({
     required this.text,
     this.isLoading = false,
     required this.onTap,
+    this.size,
   });
 
   @override
@@ -16,10 +18,9 @@ class PrimaryButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: isLoading ? null : onTap,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.purple,
-        foregroundColor: Colors.white,
-        minimumSize: const Size(double.infinity, 50),
-      ),
+          backgroundColor: Colors.purple,
+          foregroundColor: Colors.white,
+          minimumSize: Size(size ?? double.infinity, 50)),
       child: isLoading
           ? const SizedBox(
               height: 30,
