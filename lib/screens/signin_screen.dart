@@ -1,3 +1,4 @@
+import 'package:diary_app/screens/forgot_password_screen.dart';
 import 'package:diary_app/screens/home_screen.dart';
 import 'package:diary_app/screens/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,9 +27,19 @@ class _SignInScreenState extends State<SignInScreen> {
 
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
-    )
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        )
+        .then(
+          (value) => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return HomeScreen();
+              },
+            ),
+          ),
+        )
         .onError((error, stackTrace) {
       setState(() => _isLoading = false);
       return showErrorDialog();
@@ -136,6 +147,32 @@ class _SignInScreenState extends State<SignInScreen> {
                       },
                       obscureText: true,
                     ),
+                    const SizedBox(height: 10),
+                    // forgot password section
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ForgotPasswordScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "Forgot Password?",
+                            style: TextStyle(
+                              color: Colors.purple,
+                              fontWeight: FontWeight.bold,
+                              // add underline
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 16.0),
                     ElevatedButton(
                         onPressed: _isLoading ? null : checkAccount,
@@ -155,7 +192,6 @@ class _SignInScreenState extends State<SignInScreen> {
                             : const Text('Sign In')),
 
                     const SizedBox(height: 25),
-
                     // sign in text if user already has an account
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
