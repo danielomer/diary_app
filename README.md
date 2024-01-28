@@ -1,16 +1,44 @@
-# diary_app
+# Diary App
 
-A new Flutter project.
+This is a simple diary app that allows you to write and manage your personal diary entries.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Create new diary entries
+- View and edit existing diary entries
+- Delete unwanted diary entries
 
-A few resources to get you started if this is your first Flutter project:
+## Installation
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Clone the repository:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+    ```bash
+    git clone https://github.com/danielomer/diary_app.git
+    ```
+
+2. Install the dependencies:
+
+    ```bash
+    flutter pub get
+    ```
+
+3. Start the app:
+
+    ```bash
+    flutter run
+    ```
+
+## Usage
+
+1. Open the app in your web browser.
+2. Sign up or log in to your account.
+3. Start writing your diary entries!
+
+## Contributing
+
+Contributions are welcome! If you have any suggestions or improvements, please submit a pull request.
+
+## License
+
+This project has no license.
+```
