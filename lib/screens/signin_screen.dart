@@ -75,8 +75,6 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // add overflow to avoid pixel overflow
-
       // app bar
       appBar: AppBar(
         backgroundColor: Colors.purple,
