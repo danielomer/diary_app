@@ -41,4 +41,3 @@ Contributions are welcome! If you have any suggestions or improvements, please s
 ## License
 
 This project has no license.
-```
