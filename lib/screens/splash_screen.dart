@@ -23,12 +23,6 @@ class _SplashScreenState extends State<SplashScreen> {
             gifHeight: 474,
             nextScreen: const Auth(),
             duration: const Duration(seconds: 4),
-            onInit: () async {
-              debugPrint("onInit");
-            },
-            onEnd: () async {
-              debugPrint("onEnd 1");
-            },
           ),
         ),
       ),
